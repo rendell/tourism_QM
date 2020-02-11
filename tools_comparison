@@ -1,0 +1,51 @@
+library(tidyquant)
+library(ggrepel)
+
+data_apps <- tribble(
+  ~application, ~capability, ~ease_of_learning, ~trend, ~cost,   
+  "R",          10,                   4,                 10,     "Free",
+  "Python",     7,                    4,                 10,     "Free",
+  "Excel",      4,                    10,                7,      "Low",
+  "Tableau",    6,                    7,                 6,      "Low",
+  "PowerBI",    5,                    8,                 6,      "Low",
+  "Matlab",     6,                    2,                 1,      "High",
+  "SAS",        8,                    4,                 3,      "High",
+  "SPSS",       5,                    5,                 1,      "Low",
+  "STATA",      5,                    2,                 1,      "High",
+  "Eviews",     5,                    2,                 1,      "High"
+)
+
+cap <- paste0(
+  "Why R? Tools like Excel, Tableau, PowerBI are easier to learn, but have lower ",
+  "Capability. Tools like Python, SAS, and Matlab have high ",
+  "Data Science Capability, but lack the visualization and interactive ",
+  "application tools needed for academic purposes. R has the best data science, visualization, ",
+  " and interactive tools plus it's free!"
+)
+
+data_apps %>%
+  ggplot(aes(x = capability, y = ease_of_learning, 
+             color = cost, size = trend)) +
+  geom_point() +
+  geom_label_repel(aes(label = application, fill = application), 
+                   size = 3.5,
+                   fontface = 'bold', color = 'white',
+                   box.padding = 0.1, point.padding = 0.5,
+                   segment.color = 'grey50', segment.size = 1) +
+  geom_smooth(color = palette_dark()[[1]], method = "lm", se = FALSE, show.legend = F) +
+  expand_limits(x = c(0, 10), y = c(0, 10)) +
+  theme_tq() +
+  theme(legend.direction = "vertical") +
+  scale_fill_tq() +
+  scale_color_tq() +
+  scale_y_continuous(breaks = seq(0, 10, 2)) +
+  scale_x_continuous(breaks = 0:10) +
+  scale_size_continuous(range = c(2, 14)) + 
+  labs(title = "Data Tools: Capability Vs Learning Curve",
+       subtitle = "R has a longer learning curve but has a massive capability rating",
+       caption = label_wrap_gen(115)(cap),
+       x     = "Capability Rating",
+       y     = "Learning Curve Rating",
+       color = "Cost",
+       size  = "Trend",
+       fill  = "Tool")
