@@ -1,0 +1,33 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+## Packages which we will be using throughout the book. 
+Each one addes some functonality that is specific to the type of task we want to complete in R.
+
+```{r, message=FALSE}
+# Data manipulation and plotting functions 
+library(tidyverse)
+
+# Time series manipulation 
+library(tsibble) 
+
+# Forecasting functions 
+library(fable) 
+
+# Time series graphics and statistics 
+library(feasts)
+
+# Tidy time series data 
+library(tsibbledata)
+```
+
+## Tsibble object
+To get us started we are calling up a data set called "global_economy". R prints out a short summary of what the data looks like. As the otput illustrates, we are looking here at a dataframe containing data on 6 macro-economic variables (GDP, Growth, CPI, Imports, Exports and Population) for 263 countries. The frequency is yearly and covers a period of 9 years. 
+```{r}
+global_economy
+```
+You might have also noticed that the data further contains 3 more variables: Country, Code and Year. The "Year" variable is particularly important, since its what we call the "index", which allows us to specify the time dimension of the data. "Country" and "Code" are "Key" variables. These allow us to seperate one country from the other as we start analyzing the data nad might want to treat each country seperatly as we do so. 
