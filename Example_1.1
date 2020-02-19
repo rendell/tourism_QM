@@ -1,33 +1,42 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Example 1.1"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
 ---
 
 
 
-## Packages which we will be using throughout the book. 
-Each one addes some functonality that is specific to the type of task we want to complete in R.
+## Packages
+In R, Many useful functions come in packages, free libraries of code written by R's active user community. To install an R package, open an R session and type at the command line
+```{r, eval=FALSE}
+install.packages("<the package's name>")
+```
 
-```{r, message=FALSE}
+R will download the package, so you'll need to be connected to the internet. 
+Once you have a package installed, you can make its contents available to use in your current R session by running
+```{r, eval=FALSE}
+library("<the package's name>")
+```
+
+There are thousands of helpful R packages for you to use, but we will focus here on loading only the ones that add functionality that we will need for the specific type of tasks we want to be completing.
+```{r, message=FALSE, warning=FALSE}
 # Data manipulation and plotting functions 
 library(tidyverse)
-
 # Time series manipulation 
 library(tsibble) 
-
 # Forecasting functions 
 library(fable) 
-
 # Time series graphics and statistics 
 library(feasts)
-
 # Tidy time series data 
 library(tsibbledata)
 ```
 
-## Tsibble object
-To get us started we are calling up a data set called "global_economy". R prints out a short summary of what the data looks like. As the otput illustrates, we are looking here at a dataframe containing data on 6 macro-economic variables (GDP, Growth, CPI, Imports, Exports and Population) for 263 countries. The frequency is yearly and covers a period of 9 years. 
+## Data, data description, and variables
+To get us started we are calling up a data set called "global_economy" that is already available to you through the packages that you just loaded. Once you call it up by ts name, R prints out a short summary of what the data looks like. It's stored as what is called a "Tsibble object". We will get back to this concept later as it is the dataformat which will be using throughout the book to facilitate working with data that has a time dimension. As the otput illustrates, we are looking here at a dataframe containing data on 6 macro-economic variables (GDP, Growth, CPI, Imports, Exports and Population) for 263 countries. The frequency is yearly and covers a period of 9 years. 
 ```{r}
 global_economy
 ```
-You might have also noticed that the data further contains 3 more variables: Country, Code and Year. The "Year" variable is particularly important, since its what we call the "index", which allows us to specify the time dimension of the data. "Country" and "Code" are "Key" variables. These allow us to seperate one country from the other as we start analyzing the data nad might want to treat each country seperatly as we do so. 
+You might have also noticed that the data further contains 3 more variables: Country, Code and Year. The "Year" variable is particularly important, since it is what we call the "index", which allows us to specify the time dimension of the data. "Country" and "Code" are "Key" variables. These allow us to seperate one country from the other as we start analyzing the data nad might want to treat each country seperatly as we do so. 
