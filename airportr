@@ -1,0 +1,46 @@
+---
+title: "airportr"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r}
+library(airportr)
+```
+
+# Airport lookup
+```{r}
+airport_lookup("AUA")
+airport_lookup("MCO")
+```
+
+```{r}
+airport_location("Queen Beatrix International Airport")
+airport_location("MCO")
+```
+
+```{r}
+dplyr::glimpse(airport_detail("AUA"))
+```
+# Distance measure
+Reference: https://www.dshkol.com/2018/airportr-a-lightweight-package-for-airport-data/
+
+```{r}
+airport_distance("AUA","MCO")
+```
+# Import data
+Here i have manually combined two airport combinations, but its easier to fill in say a spreadsheet and import it into R.
+```{r}
+first <- c("AUA","MCO")
+second<-c("MCO","YHZ")
+cbind(first, second)
+```
+# Loop
+The loop at the moment consders two combinations. 
+```{r}
+output <- for (i in 1:2){
+  print(paste(airport_distance(first[i],second[i])))
+}
+```
