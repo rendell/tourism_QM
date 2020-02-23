@@ -43,7 +43,7 @@ global_economy
 ```
 You might have also noticed that the data further contains 3 more variables: Country, Code and Year. The "Year" variable is particularly important, since it is what we call the "index", which allows us to specify the time dimension of the data. "Country" and "Code" are "Key" variables. These allow us to seperate one country from the other as we start analyzing the data nad might want to treat each country seperatly as we do so. 
 
-```{r}
+```{r, message=FALSE, error=FALSE, warning=FALSE}
 global_economy %>%
 filter(Country=="Aruba")%>%
 select(Year,GDP)%>%
@@ -60,3 +60,4 @@ dyRangeSelector(dateWindow = c("1985", "2017"))%>%
 dyEvent("2009", "Refinery closes", labelLoc = "bottom") %>% 
 dyShading(from = "2008", to = "2010", color = "#FFE6E6")
 ```
+
