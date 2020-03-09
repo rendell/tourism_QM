@@ -1,0 +1,106 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Example 1.3
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+install.packages("coronavirus")
+# https://cran.r-project.org/web/packages/coronavirus/coronavirus.pdf
+install.pacakges("plotly")
+install.packages("magrittr")
+```
+
+```{r}
+# Set colors
+# https://www.w3.org/TR/css-color-3/#svg-color
+confirmed_color <- "purple"
+active_color <- "#1f77b4"
+recovered_color <- "forestgreen"
+death_color <- "red"
+```
+
+
+```{r, warning=FALSE}
+library(coronavirus)
+library(plotly)
+library(magrittr)
+```
+
+The dataset contains the daily summary of Coronavirus cases (confirmed, death, and recovered), by state/province and is obained from the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE). In this example, although a date variable is present, we might be more interested in exploring the data across countries, or comparing the number of confirmed vs. recovered patients. 
+
+```{r}
+data(coronavirus)
+coronavirus
+```
+
+```{r}
+coronavirus %>%
+filter(type == "confirmed") %>%
+group_by(Country.Region) %>%
+summarise(total = sum(cases)) %>%
+arrange(-total) %>%
+head(20)
+```
+
+```{r}
+coronavirus %>%
+filter(type == "recovered") %>%
+group_by(Country.Region) %>%
+summarise(total = sum(cases)) %>%
+arrange(-total) %>%
+head(20)
+```
+
+```{r}
+df <- coronavirus %>% 
+  # dplyr::filter(date == max(date)) %>%
+  dplyr::group_by(Country.Region, type) %>%
+  dplyr::summarise(total = sum(cases)) %>%
+  tidyr::pivot_wider(names_from =  type, 
+                     values_from = total) %>%
+  dplyr::mutate(unrecovered = confirmed - ifelse(is.na(recovered), 0, recovered) - ifelse(is.na(death), 0, death)) %>%
+  dplyr::arrange(-confirmed) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(country = dplyr::if_else(Country.Region == "United Arab Emirates", "UAE", Country.Region)) %>%
+  dplyr::mutate(country = dplyr::if_else(country == "Mainland China", "China", country)) %>%
+  dplyr::mutate(country = dplyr::if_else(country == "North Macedonia", "N.Macedonia", country)) %>%
+  dplyr::mutate(country = trimws(country)) %>%
+  dplyr::mutate(country = factor(country, levels = country))
+```
+
+```{r}
+plotly::plot_ly(data = df[1:30,], 
+                x = ~ country, 
+                y = ~ unrecovered, 
+                # text =  ~ confirmed, 
+                # textposition = 'auto',
+                type = "bar", 
+                name = "Active",
+                marker = list(color = active_color)) %>%
+  plotly::add_trace(y = ~ recovered, 
+                    # text =  ~ recovered, 
+                    # textposition = 'auto',
+                    name = "Recovered",
+                    marker = list(color = recovered_color)) %>%
+  plotly::add_trace(y = ~ death, 
+                    # text =  ~ death, 
+                    # textposition = 'auto',
+                    name = "Death",
+                    marker = list(color = death_color)) %>%
+  plotly::layout(barmode = 'stack',
+                 yaxis = list(title = "Total Cases (log scaled)",
+                              type = "log"),
+                 xaxis = list(title = ""),
+                 hovermode = "compare",
+                  margin =  list(
+                   # l = 60,
+                   # r = 40,
+                   b = 10,
+                   t = 10,
+                   pad = 2
+                 ))
+```
